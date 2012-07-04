@@ -15,16 +15,28 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
+	TextView txtRSSItem;
+
+	ListView listRSSItems;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		txtRSSItem = (TextView) findViewById(R.id.textViewRSSItem);
+
+		listRSSItems = (ListView) findViewById(R.id.listViewItems);
+
 		// Execute Get RSS Async task
 		new GetRSSFeed().execute();
-		
+
 	}
 
 	// AsyncTask is necessary because without it fetching the RSS feed will
@@ -42,9 +54,11 @@ public class MainActivity extends Activity {
 			ArrayList<RssItem> rssItems = null;
 			try {
 
-				URL url = new URL("http://example.com/feed.rss");// replace with
-																	// your feed
-																	// url
+				URL url = new URL(
+						"https://news.google.com/news/feeds?hl=en&gl=us&q=android&um=1&ie=UTF-8&output=rss");// replace
+																												// with
+				// your feed
+				// url. This url is a google news search feed for android
 				RssFeed feed = RssReader.read(url);
 				rssItems = feed.getRssItems();
 
@@ -65,7 +79,7 @@ public class MainActivity extends Activity {
 		// method to start a progressbar so the user knows something is
 		// happening
 		@Override
-		protected void onPreExecute() {		
+		protected void onPreExecute() {
 			super.onPreExecute();
 		}
 
@@ -76,16 +90,37 @@ public class MainActivity extends Activity {
 		// it here.
 		@Override
 		protected void onPostExecute(ArrayList<RssItem> items) {
-			// Example: print RSS items titles to CatLog
-			for (RssItem rssItem : items) {
-				Log.i("RSS Reader", rssItem.getTitle());
+			if (items != null) {
+				// Example: print RSS items titles to CatLog
+				for (RssItem rssItem : items) {
+					Log.i("RSS Reader", rssItem.getTitle());
+				}
+
+				// Example:populate TextView with first RSS Item's title
+				txtRSSItem.setText(items.get(0).getTitle());
+
+				// Example: Populate a listView with RSS items titles, using a
+				// simple ArrayAdapter
+
+				// Get item titles from the items ArrayList and put them into a
+				// string array for use with the ArrayAdapter
+				String[] itemTitlesArray = new String[items.size()];
+				int i = 0;
+				for (RssItem rssItem : items) {
+					Log.i("RSS Reader", rssItem.getTitle());
+					itemTitlesArray[i] = rssItem.getTitle();
+					i++;
+				}
+
+				// Set titles as listview items
+				listRSSItems.setAdapter(new ArrayAdapter<String>(
+						getApplicationContext(), R.layout.listitem,
+						R.id.textTitle, itemTitlesArray));
+			} else {
+				Toast.makeText(getApplicationContext(), "No RSS items found",
+						Toast.LENGTH_SHORT).show();
 			}
 
-			// Example:populate TextView with first RSS Item's title
-			// textView.setText(items.get(0).getTitle());
-
-			//Example: Populate a listView with RSS items titles
-			
 		}
 
 	}

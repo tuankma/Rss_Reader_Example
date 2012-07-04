@@ -4,12 +4,21 @@
     android:layout_height="fill_parent" >
 
     <TextView
+        android:id="@+id/textViewRSSItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:padding="@dimen/padding_medium"
-        android:text="@string/hello_world"
-        tools:context=".MainActivity" />
+        android:layout_marginTop="28dp"
+        android:text="TextView" />
+
+    <ListView
+        android:id="@+id/listViewItems"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewRSSItem"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp" >
+    </ListView>
 
 </RelativeLayout>
